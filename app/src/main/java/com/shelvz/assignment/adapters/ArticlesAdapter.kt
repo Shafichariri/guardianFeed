@@ -15,7 +15,9 @@ class ArticlesAdapter(context: Context, items: MutableList<Article>) :
     }
 
     override fun onViewHolderBound(item: Article, position: Int, binding: ItemArticleBinding, holder: DataBoundBaseViewHolder<Article, ItemArticleBinding>) {
-        binding.test = item.webTitle
+        binding.category = item.type.toUpperCase()
+        binding.imageUrl = item.fields?.thumbnail
+        binding.title = item.webTitle
     }
 
     override fun getLoaderLayoutId(): Int {
