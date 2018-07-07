@@ -1,6 +1,7 @@
 package com.shelvz.assignment.models.response
 
 import com.shelvz.assignment.models.BaseModel
+import com.shelvz.assignment.models.PageInfo
 
 data class APIResponseBody<T : BaseModel>(
         override var status: String? = null,
@@ -13,13 +14,13 @@ data class APIResponseBody<T : BaseModel>(
         override var orderBy: String? = null,
         override var results: List<T>? = null) : APIBaseResponseBody<T>
 
-interface APIBaseResponseBody<T : BaseModel> {
+interface APIBaseResponseBody<T : BaseModel> : PageInfo {
     var status: String?
     var userTier: String?
     var total: Int?
     var startIndex: Int?
-    var pageSize: Int?
-    var currentPage: Int?
+    override var pageSize: Int?
+    override var currentPage: Int?
     var pages: Int?
     var orderBy: String?
     var results: List<T>?
