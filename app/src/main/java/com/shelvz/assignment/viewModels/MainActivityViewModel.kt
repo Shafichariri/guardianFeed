@@ -57,6 +57,10 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                 })
     }
 
+    fun addArticle(article: Article, cache: Boolean) {
+        ArticlesManager.addArticle(article, cache)
+    }
+
     private fun updateArticles(liveList: MutableLiveData<MutableList<Article>>,
                                articles: List<Article>) {
         //Update liveList without notifying change

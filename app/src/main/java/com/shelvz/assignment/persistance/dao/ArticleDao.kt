@@ -17,6 +17,9 @@ interface ArticleDao : BaseDao {
     @Query("DELETE FROM articles")
     fun delete()
 
+    @Query("DELETE FROM articles where id = :id")
+    fun delete(id: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(users: List<Article>)
 }

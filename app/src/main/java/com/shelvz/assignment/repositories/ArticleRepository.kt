@@ -17,11 +17,29 @@ object ArticleRepository : Repository<Article> {
     override val context: Context
         get() = BaseApplication.getInstance()
 
-    override fun delete() {
+    override fun delete(): Flowable<Unit> {
         //Run delete safely
-        Flowable.fromCallable { instantDelete() }
+        return Flowable.fromCallable { instantDelete() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun delete(subscribeOn: Scheduler = Schedulers.io(),
+               observeOn: Scheduler = AndroidSchedulers.mainThread(),
+               articleId: String): Flowable<Unit> {
+        return Flowable.fromCallable { dao.delete(articleId) }
+                .subscribeOn(subscribeOn)
+                .observeOn(observeOn)
+
+    }
+
+    fun get(subscribeOn: Scheduler = Schedulers.io(),
+            observeOn: Scheduler = AndroidSchedulers.mainThread(),
+            articleId: String): Flowable<Article> {
+        return Flowable
+                .fromCallable { dao.getArticleById(articleId) }
+                .subscribeOn(subscribeOn)
+                .observeOn(observeOn)
     }
 
     /**
