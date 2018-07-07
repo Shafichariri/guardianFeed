@@ -1,7 +1,8 @@
-package com.shelvz.assignment
+package com.shelvz.assignment.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.shelvz.assignment.R
 
 class MainActivity : AppCompatActivity() {
 
