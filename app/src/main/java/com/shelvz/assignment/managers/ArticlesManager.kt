@@ -10,7 +10,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 object ArticlesManager {
-    private var nextPage: Int = 1
+    private var nextPage: Int? = 1
 
     fun getArticles(subscribeOn: Scheduler = Schedulers.io(),
                     observeOn: Scheduler = AndroidSchedulers.mainThread(),
@@ -18,7 +18,7 @@ object ArticlesManager {
 
         return NetworkManager.jsonClient
                 .createService(SearchServices::class.java)
-                .search(page = pageNumber ?: nextPage)
+                .search(page = pageNumber ?: nextPage ?: 1)
                 .subscribeOn(subscribeOn)
                 .observeOn(observeOn)
                 .flatMap {
@@ -30,7 +30,8 @@ object ArticlesManager {
 
                     //Update next page number in memory
                     val pageInfo: PageInfo = response
-                    nextPage = (pageInfo.currentPage ?: 0) + 1
+                    nextPage = if (pageInfo.currentPage == null) null
+                    else ((pageInfo.currentPage ?: 0) + 1)
 
                     //Note: We should return flowableCachedList if we were caching everything
                     return@flatMap Flowable.fromArray(list)
@@ -43,6 +44,6 @@ object ArticlesManager {
         return getArticles(subscribeOn, observeOn)
     }
 
-    fun canLoadMore(): Boolean = (nextPage <= 10)
+    fun canLoadMore(): Boolean = (nextPage != null)
 
 }
