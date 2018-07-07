@@ -58,6 +58,25 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
 
     override fun <T> onItemClick(position: Int, item: T) {
         if (item is Article) {
+            viewModel.addArticle(item, cache = false)
+
+            val vh = viewDataBinding.recyclerView.findViewHolderForAdapterPosition(position)
+            val sharedImageView = vh.itemView.findViewById<ImageView>(R.id.imageView_thumbnail)
+            val titleTextView = vh.itemView.findViewById<AppCompatTextView>(R.id.textView_title)
+            val intent = Intent(this, ArticleDetailsActivity::class.java)
+
+            intent.putExtra(EXTRA_ARTICLE_ID, item.id)
+            intent.putExtra(EXTRA_ARTICLE_IMAGE_URL, item.fields?.thumbnail ?: "")
+            intent.putExtra(EXTRA_IMAGE_TRANSITION, ViewCompat.getTransitionName(sharedImageView))
+
+            val imageTransitionPair: android.support.v4.util.Pair<View, String> = android.support.v4.util.Pair(sharedImageView,
+                    ViewCompat.getTransitionName(sharedImageView))
+            val textTransitionPair: android.support.v4.util.Pair<View, String> = android.support.v4.util.Pair(titleTextView,
+                    ViewCompat.getTransitionName(titleTextView))
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                    imageTransitionPair, textTransitionPair)
+
+            startActivity(intent, options.toBundle())
         }
     }
 
