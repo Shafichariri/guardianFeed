@@ -21,15 +21,15 @@ import java.util.concurrent.TimeUnit
 
 object NetworkClientFactory {
 
-    internal fun createJsonClient(baseUrl: String): NetworkClient {
+    internal fun createJsonClient(baseUrl: String, apiKey: String): NetworkClient {
         val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(createGson()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(baseUrl)
 
-        return NetworkClient(retrofit, createDefaultClient(), createDefaultUnSignedClient())
+        return NetworkClient(retrofit, createDefaultClient(apiKey), createDefaultUnSignedClient())
     }
-
+    
     private fun createGson(): Gson {
         val gson: Gson = GsonBuilder()
                 .setDateFormat(DateFormat.FULL, DateFormat.FULL)
@@ -62,15 +62,26 @@ object NetworkClientFactory {
                 .build()
     }
 
-    private fun createDefaultClient(): OkHttpClient {
+    private fun createDefaultClient(apiKey: String): OkHttpClient {
         val defaultClient = OkHttpClient.Builder()
 
         return defaultClient
                 .readTimeout(NetworkConstants.READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .addInterceptor(createLoggingInterceptor())
+                .addInterceptor(createKeyAuthenticationInterceptor(apiKey))
                 .build()
     }
 
+    private fun createKeyAuthenticationInterceptor(apiKey: String): Interceptor {
+        return Interceptor { chain ->
+            val request = chain.request()
+                    ?.newBuilder()
+                    ?.addHeader("api-key", apiKey)
+                    ?.build()
+            chain.proceed(request!!)
+        }
+    }
+    
     private fun createLoggingInterceptor(): Interceptor {
         val logging = HttpLoggingInterceptor()
         // set your desired log level

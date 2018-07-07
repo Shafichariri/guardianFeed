@@ -9,7 +9,8 @@ package com.shelvz.assignment.network
  */
 
 object NetworkManager {
-    var jsonClient = NetworkClientFactory.createJsonClient(NetworkConstants.API_URL)
+    var jsonClient = NetworkClientFactory.createJsonClient(NetworkConstants.API_URL, 
+            NetworkConstants.API_KEY)
 
     //Add extra utilities | Switch Server | Use another client | extract defaulted network errors
 }
