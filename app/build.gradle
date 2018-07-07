@@ -20,13 +20,60 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    implementation "com.android.support:appcompat-v7:$androidSupportVersion"
+    implementation "com.android.support:design:$androidSupportVersion"
+    implementation "com.android.support:recyclerview-v7:$androidSupportVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    //Data Binding
+    kapt "com.android.databinding:compiler:$pluginVersion"
+    
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    // architecture Components Annotation Processor
+    kapt "android.arch.lifecycle:compiler:$lifecycleVersion"
+    // ReactiveStreams support for LiveData
+    implementation "android.arch.lifecycle:reactivestreams:$lifecycleVersion"
+
+    // architecture Components Room Setup
+    implementation "android.arch.persistence.room:runtime:$archDbVersion"
+    implementation "android.arch.persistence.room:rxjava2:$archDbVersion"
+    kapt "android.arch.persistence.room:compiler:$archDbVersion"
+
+
+    //Retrofit Networking Library
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion") {
+        // exclude Retrofit’s OkHttp peer-dependency module and define your own module import
+        exclude module: 'okhttp'
+    }
+
+    //OkHttp
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+
+    //Json Parser
+    implementation 'com.google.code.gson:gson:2.8.2'
+
+    //RxJava Retrofit plugins
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+
+    //Rx-Android
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+
+
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttpVersion"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
