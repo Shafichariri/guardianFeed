@@ -8,4 +8,24 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppBarLayoutStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!-- AppBar Custom Style -->
+    </style>
+    
+    <style name="ActionBarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">@color/control_default_color</item>
+        <item name="android:textColorPrimary">@color/toolbar_text_color</item>
+    </style>
+    
+    <style name="ToolbarStyle">
+        <!-- Note: Font is inherited from Calligraphy defaults in Context-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:theme">@style/ActionBarTheme</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+        <item name="android:background">@color/tool_bar_background_color</item>
+        <item name="titleTextColor">@color/toolbar_text_color</item>
+        <item name="colorControlNormal">@color/control_default_color</item>
+        <item name="android:textColorPrimary">@color/toolbar_text_color</item>
+    </style>
 </resources>

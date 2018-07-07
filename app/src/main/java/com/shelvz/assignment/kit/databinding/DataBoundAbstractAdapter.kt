@@ -25,16 +25,31 @@ abstract class DataBoundAbstractAdapter<T, VDB : ViewDataBinding>(context: Conte
     override fun onBindViewHolder(holder: DataBoundBaseViewHolder<T, VDB>,
                                   position: Int) {
         super.onBindViewHolder(holder, position)
-        val item = getObjForPosition(position)
-        onViewHolderBound(item, position, holder.binding, holder)
+        if (!isLoaderPosition(position = position)) {
+            val item = getDataItem(position)
+            onViewHolderBound(item, position, holder.binding, holder)
+        }
         holder.executePending()
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getLayoutIdForPosition(position)
+        return if (isLoaderPosition(position = position)) {
+            getLoaderLayoutId()
+        } else {
+            getLayoutIdForPosition(position)
+        }
     }
 
-    protected abstract fun getObjForPosition(position: Int): T
+    open fun prepend(list: List<T>) {
+        data.addAll(0, list)
+        notifyItemRangeInserted(0, list.size)
+    }
+
+    open fun append(list: List<T>) {
+        val sizeBefore = data.size
+        data.addAll(sizeBefore, list)
+        notifyItemRangeInserted(sizeBefore, data.size)
+    }
 
     protected abstract fun getLayoutIdForPosition(position: Int): Int
 
