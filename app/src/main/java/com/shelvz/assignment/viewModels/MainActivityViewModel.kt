@@ -39,7 +39,8 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
     }
 
     fun loadNextPage() {
-        if (!ArticlesManager.canLoadMore()) return
+        val isLoading = isLoadingMore.value ?: false
+        if (!ArticlesManager.canLoadMore() || isLoading) return
 
         isLoadingMore.value = true
 
