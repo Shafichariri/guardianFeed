@@ -43,4 +43,6 @@ object ArticlesManager {
         return getArticles(subscribeOn, observeOn)
     }
 
+    fun canLoadMore(): Boolean = (nextPage <= 10)
+
 }
