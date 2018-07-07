@@ -18,8 +18,17 @@ android {
     }
     buildTypes {
         release {
+            Properties props = loadPropertiesFromFile("./config/prod.properties")
+            buildConfigField("String", "API_BASE_URL", props["base_url"])
+            buildConfigField("String", "API_KEY", props["api_key"])
+            
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            Properties props = loadPropertiesFromFile("./config/dev.properties")
+            buildConfigField("String", "API_BASE_URL", props["base_url"])
+            buildConfigField("String", "API_KEY", props["api_key"])
         }
     }
     dataBinding {
@@ -79,4 +88,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+// Define a method: Load Keys from the file with path
+def loadPropertiesFromFile(String filePath) {
+    Properties props = new Properties()
+    props.load(new FileInputStream(file(project.file(filePath))))
+    return props
 }
