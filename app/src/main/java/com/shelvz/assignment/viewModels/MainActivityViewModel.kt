@@ -71,7 +71,13 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
         }
     }
 
-    fun startThirtySecondsPull() {
+    private fun startPullIfNeeded() {
+        if (!isCachedMode()) {
+            startThirtySecondsPull()
+        }
+    }
+
+    private fun startThirtySecondsPull() {
         disposeFrom(repeatDisposable)
 
         repeatDisposable = Flowable
@@ -86,6 +92,7 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({
+                                var addedItemsCount = 0
                                 it.forEach { item ->
                                     val found = list.find {
                                         return@find item.id == it.id
@@ -93,10 +100,11 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                                     if (!found) {
                                         //Add to list only if it is a new item
                                         list.add(0, item)
+                                        addedItemsCount++
                                     }
                                 }
 
-                                liveAction.postValue(Action.Prepend())
+                                liveAction.postValue(Action.Prepend(addedItemsCount))
                             }, { it.printStackTrace() })
                 }, { it.printStackTrace() })
     }
@@ -153,9 +161,11 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                     list.clear()
                     list.addAll(articles)
                     liveAction.postValue(Action.Reload())
+                    startPullIfNeeded()
                 }, { t: Throwable? ->
                     t?.printStackTrace()
                     isLoadingMore.value = false
+                    startPullIfNeeded()
                 })
     }
 

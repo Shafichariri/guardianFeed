@@ -19,6 +19,7 @@ import com.shelvz.assignment.databinding.ItemArticleBinding
 import com.shelvz.assignment.kit.base.BaseAdapter
 import com.shelvz.assignment.kit.databinding.DataBoundActivity
 import com.shelvz.assignment.models.Article
+import com.shelvz.assignment.utilities.Action
 import com.shelvz.assignment.utilities.LoadMoreListener
 import com.shelvz.assignment.utilities.Mode
 import com.shelvz.assignment.viewModels.MainActivityViewModel
@@ -51,16 +52,20 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             setupActionBar()
         }
 
-        viewModel.getAction().observe(this, Observer { _ ->
+        viewModel.getAction().observe(this, Observer { action ->
             adapter.update(viewModel.getList())
+            if (action is Action.Prepend && action.count > 0) {
+                viewDataBinding.pullUpButtonVisibility = true
+            }
         })
         viewModel.getIsLoadMore().observe(this, Observer { isLoadingMore ->
-            viewDataBinding.recyclerView.postDelayed({ adapter.setShowLoader(isLoadingMore ?: false) }, 100)
+            if (viewDataBinding.recyclerView.layoutManager == null) {
+                viewDataBinding.recyclerView.postDelayed({ adapter.setShowLoader(isLoadingMore ?: false) }, 100)
+            } else {
+                adapter.setShowLoader(isLoadingMore ?: false)
+            }
         })
         viewModel.loadArticles()
-        if (!viewModel.isCachedMode()) {
-            viewModel.startThirtySecondsPull()
-        }
 
         adapter.onItemClickListener = this
     }

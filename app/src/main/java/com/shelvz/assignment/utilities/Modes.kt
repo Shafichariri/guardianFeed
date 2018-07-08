@@ -22,7 +22,7 @@ sealed class Mode(id: Int) {
 sealed class Action(id: Int) {
     class Reload : Action(RELOAD)
     class Add : Action(ADD)
-    class Prepend : Action(PREPEND)
+    class Prepend(val count: Int) : Action(PREPEND)
     class None : Action(None)
     companion object {
         const val RELOAD = 1
@@ -33,7 +33,7 @@ sealed class Action(id: Int) {
             return when (id) {
                 RELOAD -> Action.Reload()
                 ADD -> Action.Add()
-                PREPEND -> Action.Prepend()
+                PREPEND -> Action.Prepend(0)
                 else -> Action.None()
             }
         }
