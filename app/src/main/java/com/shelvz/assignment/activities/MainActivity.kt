@@ -4,24 +4,25 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.view.ViewCompat
-import android.support.v7.widget.AppCompatTextView
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import com.shelvz.assignment.R
 import com.shelvz.assignment.adapters.ArticlesAdapter
 import com.shelvz.assignment.databinding.ActivityMainBinding
+import com.shelvz.assignment.databinding.ItemArticleBinding
 import com.shelvz.assignment.kit.base.BaseAdapter
 import com.shelvz.assignment.kit.databinding.DataBoundActivity
 import com.shelvz.assignment.models.Article
+import com.shelvz.assignment.utilities.Action
 import com.shelvz.assignment.utilities.LoadMoreListener
+import com.shelvz.assignment.utilities.Mode
 import com.shelvz.assignment.viewModels.MainActivityViewModel
-import com.shelvz.assignment.viewModels.Mode
 
 
 class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewModel>(), BaseAdapter.OnItemClickListener {
@@ -38,6 +39,7 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
     }
 
     override fun onCreated(viewDataBinding: ActivityMainBinding, viewModel: MainActivityViewModel, savedInstanceState: Bundle?) {
+        viewDataBinding.listener = this
         setupRecyclerView()
 
         val extras: Bundle? = intent.extras
@@ -52,13 +54,16 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
 
         viewModel.getAction().observe(this, Observer { action ->
             adapter.update(viewModel.getList())
-//            when(action) {
-//                is Action.Add -> adapter.update(viewModel.getList())
-//                is Action.Reload -> adapter.set(viewModel.getList())
-//            }
+            if (action is Action.Prepend && action.count > 0) {
+                viewDataBinding.pullUpButtonVisibility = true
+            }
         })
         viewModel.getIsLoadMore().observe(this, Observer { isLoadingMore ->
-            adapter.setShowLoader(isLoadingMore ?: false)
+            if (viewDataBinding.recyclerView.layoutManager == null) {
+                viewDataBinding.recyclerView.postDelayed({ adapter.setShowLoader(isLoadingMore ?: false) }, 100)
+            } else {
+                adapter.setShowLoader(isLoadingMore ?: false)
+            }
         })
         viewModel.loadArticles()
 
@@ -72,6 +77,13 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             viewModel.reloadCachedArticles()
         }
     }
+
+    //region D A T A B O U N D  C L I C K  L I S T E N E R S    
+    fun onPullUpButtonClick(view: View) {
+        viewDataBinding.pullUpButtonVisibility = false
+        viewDataBinding.recyclerView.smoothScrollToPosition(0)
+    }
+    //endregion
 
     //region T O O L B A R  A N D  M E N U
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -141,22 +153,28 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             viewModel.addArticleToMemory(item)
 
             val vh = viewDataBinding.recyclerView.findViewHolderForAdapterPosition(position)
-            val sharedImageView = vh.itemView.findViewById<ImageView>(R.id.imageView_thumbnail)
-            val titleTextView = vh.itemView.findViewById<AppCompatTextView>(R.id.textView_title)
+            val binding = DataBindingUtil.getBinding<ItemArticleBinding>(vh.itemView) ?: return
+            val sharedImageView = binding.imageViewThumbnail
+            val titleTextView = binding.textViewTitle
+            val thumbnailUrl = item.fields?.thumbnail ?: ""
             val intent = ArticleDetailsActivity.getIntent(this)
 
             intent.putExtra(EXTRA_ARTICLE_ID, item.id)
-            intent.putExtra(EXTRA_ARTICLE_IMAGE_URL, item.fields?.thumbnail ?: "")
+            intent.putExtra(EXTRA_ARTICLE_IMAGE_URL, thumbnailUrl)
             intent.putExtra(EXTRA_IMAGE_TRANSITION, ViewCompat.getTransitionName(sharedImageView))
+            if (thumbnailUrl.isNotBlank()) {
+                val imageTransitionPair: android.support.v4.util.Pair<View, String> = android.support.v4.util.Pair(sharedImageView,
+                        ViewCompat.getTransitionName(sharedImageView))
+                val textTransitionPair: android.support.v4.util.Pair<View, String> = android.support.v4.util.Pair(titleTextView,
+                        ViewCompat.getTransitionName(titleTextView))
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                        imageTransitionPair, textTransitionPair)
+                startActivity(intent, options.toBundle())
+            } else {
+                startActivity(intent)
+            }
 
-            val imageTransitionPair: android.support.v4.util.Pair<View, String> = android.support.v4.util.Pair(sharedImageView,
-                    ViewCompat.getTransitionName(sharedImageView))
-            val textTransitionPair: android.support.v4.util.Pair<View, String> = android.support.v4.util.Pair(titleTextView,
-                    ViewCompat.getTransitionName(titleTextView))
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                    imageTransitionPair, textTransitionPair)
 
-            startActivity(intent, options.toBundle())
         }
     }
 
