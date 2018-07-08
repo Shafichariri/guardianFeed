@@ -13,8 +13,8 @@ import io.reactivex.schedulers.Schedulers
 class MainActivityViewModel(application: Application) : BaseViewModel(application) {
     private val TAG = MainActivityViewModel::class.java.simpleName
     
-    var liveList: MutableLiveData<MutableList<Article>> = MutableLiveData()
-    var isLoadingMore: MutableLiveData<Boolean> = MutableLiveData()
+    private var liveList: MutableLiveData<MutableList<Article>> = MutableLiveData()
+    private var isLoadingMore: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         liveList.value = mutableListOf()
