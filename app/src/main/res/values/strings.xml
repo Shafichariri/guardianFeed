@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Assignment</string>
+    
+    <string name="main_activity_title">Guardian Feed</string>
+    <string name="load_more">Loading more...</string>
+    <string name="cached">Cached</string>
+
+    <string name="simple_image_transition">simple_activity_image_transition</string>
+    <string name="simple_text_transition">simple_activity_text_transition</string>
 </resources>

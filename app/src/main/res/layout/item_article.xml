@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="title"
+            type="String"/>
+
+        <variable
+            name="imageUrl"
+            type="String"/>
+
+        <variable
+            name="category"
+            type="String"/>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="UnusedAttribute">
+
+        <TextView
+            android:id="@+id/textView_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/text_default_color"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/imageView_thumbnail"
+            android:transitionName="@string/simple_text_transition"
+            android:maxLines="3"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:text="@{title}"/>
+
+        <TextView
+            android:id="@+id/textView_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/text_default_color"
+            android:layout_below="@id/textView_title"
+            android:layout_toRightOf="@id/imageView_thumbnail"
+            android:maxLines="1"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:text="@{category}"/>
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/imageView_thumbnail"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:minWidth="80dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:background="@color/color_06"
+            android:scaleType="fitCenter"
+            android:transitionName="@string/simple_image_transition"
+            app:imageUrl="@{imageUrl}"/>
+    </RelativeLayout>
+
+</layout>

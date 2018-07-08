@@ -3,4 +3,34 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- Start: Style Guide Colors -->
+    <color name="color_01">#000000</color>
+    <color name="color_02">#0080ff</color>
+    <color name="color_02b">#006cd8</color>
+    <color name="color_03">#89c4ff</color>
+    <color name="color_04">#f2f2ff</color>
+    <color name="color_05">#737373</color>
+    <color name="color_06">#c0c0c2</color>
+    <!-- End: Style Guide Colors -->
+
+    <color name="red_munsell">#8e0021</color>
+    
+    <!--region Defaults -->
+    <color name="clear_background_color">@android:color/white</color>
+    <color name="background_color">@color/color_04</color>
+    <color name="text_default_color">@color/color_01</color>
+    <color name="text_light_color">@color/color_04</color>
+    <color name="text_dark_color">@color/color_02</color>
+    <color name="text_accent_color">@color/color_03</color>
+    <color name="toolbar_text_color">@color/text_light_color</color>
+    <color name="control_default_color">@color/color_04</color>
+    <color name="status_bar_color">@color/colorPrimaryDark</color>
+    <color name="tool_bar_background_color">@color/colorPrimary</color>
+    <color name="control_activated_color">@color/colorPrimary</color>
+    <color name="disabled_color">@color/color_05</color>
+    <color name="ripple_color">@color/colorAccent</color>
+    <color name="icon_tint_light_color">@color/clear_background_color</color>
+    <color name="icon_tint_dark_color">@color/colorPrimary</color>
+    <color name="error_color">@color/red_munsell</color>
 </resources>
