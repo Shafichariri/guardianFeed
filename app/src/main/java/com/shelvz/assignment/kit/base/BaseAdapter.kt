@@ -69,13 +69,13 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(val context: Context
             if (holder.itemView != null) {
                 if (onItemClickListener != null) {
                     holder.itemView.setOnClickListener {
-                        onItemClickListener!!.onItemClick(position, getDataItem(position))
+                        onItemClickListener!!.onItemClick(holder.adapterPosition, getDataItem(holder.adapterPosition))
                     }
                 }
 
                 if (onItemLongClickListener != null) {
                     holder.itemView.setOnLongClickListener {
-                        onItemLongClickListener!!.onItemLongClick(position, getDataItem(position))
+                        onItemLongClickListener!!.onItemLongClick(holder.adapterPosition, getDataItem(holder.adapterPosition))
                         return@setOnLongClickListener true
                     }
                 }
