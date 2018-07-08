@@ -50,12 +50,8 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             setupActionBar()
         }
 
-        viewModel.getAction().observe(this, Observer { action ->
+        viewModel.getAction().observe(this, Observer { _ ->
             adapter.update(viewModel.getList())
-//            when(action) {
-//                is Action.Add -> adapter.update(viewModel.getList())
-//                is Action.Reload -> adapter.set(viewModel.getList())
-//            }
         })
         viewModel.getIsLoadMore().observe(this, Observer { isLoadingMore ->
             adapter.setShowLoader(isLoadingMore ?: false)
