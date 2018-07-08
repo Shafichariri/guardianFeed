@@ -6,41 +6,94 @@ import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import com.shelvz.assignment.kit.databinding.BaseViewModel
 import com.shelvz.assignment.managers.ArticlesManager
+import com.shelvz.assignment.managers.BookmarksManager
 import com.shelvz.assignment.models.Article
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class MainActivityViewModel(application: Application) : BaseViewModel(application) {
     private val TAG = MainActivityViewModel::class.java.simpleName
-    
-    var liveList: MutableLiveData<MutableList<Article>> = MutableLiveData()
-    var isLoadingMore: MutableLiveData<Boolean> = MutableLiveData()
+    //Pair of Boolean and a List: Boolean is used to know if adapter should be reset or appended  
+    private var liveAction: MutableLiveData<Action> = MutableLiveData()
+    private var list: MutableList<Article> = mutableListOf()
+    private var isLoadingMore: MutableLiveData<Boolean> = MutableLiveData()
+    private var mode: Mode? = Mode.None()
 
     init {
-        liveList.value = mutableListOf()
         isLoadingMore.value = false
     }
 
-    fun getList(): LiveData<MutableList<Article>> {
-        return liveList
+    fun setModeWith(id: Int) {
+        mode = Mode.with(id)
+    }
+
+    fun isCachedMode(): Boolean = mode is Mode.Local
+
+    fun getAction(): LiveData<Action> {
+        return liveAction
+    }
+
+    fun getList(): MutableList<Article> {
+        return list
     }
 
     fun getIsLoadMore(): LiveData<Boolean> {
         return isLoadingMore
     }
 
-    fun loadArticles() {
-        ArticlesManager
-                .getArticles(Schedulers.io(), AndroidSchedulers.mainThread(), pageNumber = 1)
+    fun reloadCachedArticles() {
+        BookmarksManager.get()
                 .subscribe({ articles: List<Article> ->
+                    val list = list
+                    var changed = false
+                    list.forEach { item ->
+                        changed = articles.find { it.id == item.id } != null
+                        if (changed) {
+                            return@forEach
+                        }
+                    }
                     //Update
-                    updateArticles(liveList, articles)
+                    list.clear()
+                    list.addAll(articles)
+                    liveAction.postValue(Action.Reload())
                 }, { t: Throwable? ->
                     t?.printStackTrace()
                 })
     }
 
+    fun loadArticles() {
+        val mode = mode ?: return
+        if (mode is Mode.None) return
+        //Config change will trigger loadArticles so we exit if the list already exists
+        if (list.isNotEmpty()) return
+
+        isLoadingMore.value = true
+
+        //Change data source according to mode
+        val flowable: Flowable<List<Article>> = when (mode) {
+            is Mode.Local -> BookmarksManager.get()
+            else -> ArticlesManager.getArticles(Schedulers.io(), AndroidSchedulers.mainThread(), pageNumber = 1)
+        }
+
+        flowable
+                .subscribe({ articles: List<Article> ->
+                    isLoadingMore.value = false
+                    //Update
+                    list.clear()
+                    list.addAll(articles)
+                    liveAction.postValue(Action.Reload())
+                }, { t: Throwable? ->
+                    t?.printStackTrace()
+                    isLoadingMore.value = false
+                })
+    }
+
     fun loadNextPage() {
+        val mode = mode ?: return
+        //In local Mode we do not have paging
+        if (mode is Mode.Local || mode is Mode.None) return
+
         val isLoading = isLoadingMore.value ?: false
         if (!ArticlesManager.canLoadMore() || isLoading) return
 
@@ -50,7 +103,8 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                 .getNextPageArticles(Schedulers.io(), AndroidSchedulers.mainThread())
                 .subscribe({ articles: List<Article> ->
                     //Update
-                    updateArticles(liveList, articles)
+                    list.addAll(articles)
+                    liveAction.postValue(Action.Add())
 
                     isLoadingMore.value = false
                 }, { t: Throwable? ->
@@ -64,12 +118,41 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                 .subscribe({ Log.e(TAG, "Success: $it | Removed") },
                         { it.printStackTrace() })
     }
+}
 
-    private fun updateArticles(liveList: MutableLiveData<MutableList<Article>>,
-                               articles: List<Article>) {
-        //Update liveList without notifying change
-        liveList.value?.addAll(articles)
-        //Post changes on liveList
-        liveList.postValue(articles.toMutableList())
+sealed class Action(id: Int) {
+    class Reload : Action(RELOAD)
+    class Add : Action(ADD)
+    class None : Action(None)
+    companion object {
+        const val RELOAD = 1
+        const val ADD = 2
+        const val None = -1
+        fun with(id: Int): Mode {
+            return when (id) {
+                RELOAD -> Mode.Local()
+                ADD -> Mode.Remote()
+                else -> Mode.None()
+            }
+        }
+    }
+}
+
+sealed class Mode(id: Int) {
+    class Local : Mode(LOCAL)
+    class Remote : Mode(REMOTE)
+    class None : Mode(None)
+
+    companion object {
+        const val LOCAL = 1
+        const val REMOTE = 2
+        const val None = -1
+        fun with(id: Int): Mode {
+            return when (id) {
+                LOCAL -> Local()
+                REMOTE -> Remote()
+                else -> None()
+            }
+        }
     }
 }

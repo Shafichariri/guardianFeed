@@ -5,7 +5,6 @@ import com.shelvz.assignment.models.Optional
 import com.shelvz.assignment.models.PageInfo
 import com.shelvz.assignment.network.NetworkManager
 import com.shelvz.assignment.network.apiServices.SearchServices
-import com.shelvz.assignment.repositories.ArticleRepository
 import io.reactivex.Flowable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,13 +22,7 @@ object ArticlesManager {
 
         return if (cache) {
             //Add to db
-            ArticleRepository
-                    .insert(subscribeOn = subscribeOn, observeOn = observeOn, list = listOf(article))
-                    .map { it.isNotEmpty() }
-                    .onErrorReturn {
-                        it.printStackTrace()
-                        false
-                    }
+            BookmarksManager.add(subscribeOn = subscribeOn, observeOn = observeOn, article = article)
         } else {
             Flowable.just(true).subscribeOn(subscribeOn).observeOn(observeOn)
         }
@@ -43,13 +36,7 @@ object ArticlesManager {
 
         return if (cache) {
             //Remove from db
-            ArticleRepository
-                    .delete(subscribeOn = subscribeOn, observeOn = observeOn,articleId = article.id)
-                    .map { true }
-                    .onErrorReturn {
-                        it.printStackTrace()
-                        false
-                    }
+            BookmarksManager.remove(subscribeOn = subscribeOn, observeOn = observeOn, article = article)
         } else {
             Flowable.just(true).subscribeOn(subscribeOn).observeOn(observeOn)
         }
@@ -64,7 +51,7 @@ object ArticlesManager {
             }
         }
         //From db
-        return ArticleRepository.get(articleId = id)
+        return BookmarksManager.get(id = id)
     }
 
     fun getArticles(subscribeOn: Scheduler = Schedulers.io(),
@@ -80,15 +67,11 @@ object ArticlesManager {
                     val response = it.response ?: return@flatMap Flowable.fromArray(listOf<Article>())
                     val list = response.results ?: return@flatMap Flowable.fromArray(listOf<Article>())
 
-                    //Note: Cache result list if needed
-                    //val flowableCachedList = insert(list = list)
-
                     //Update next page number in memory
                     val pageInfo: PageInfo = response
                     nextPage = if (pageInfo.currentPage == null) null
                     else ((pageInfo.currentPage ?: 0) + 1)
 
-                    //Note: We should return flowableCachedList if we were caching everything
                     return@flatMap Flowable.fromArray(list)
                 }
     }

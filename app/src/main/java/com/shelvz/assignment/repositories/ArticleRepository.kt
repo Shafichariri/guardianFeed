@@ -43,6 +43,15 @@ object ArticleRepository : Repository<Article> {
                 .observeOn(observeOn)
     }
 
+
+    fun get(subscribeOn: Scheduler = Schedulers.io(),
+            observeOn: Scheduler = AndroidSchedulers.mainThread()): Flowable<List<Article>> {
+        return Flowable
+                .fromCallable { dao.get() }
+                .subscribeOn(subscribeOn)
+                .observeOn(observeOn)
+    }
+
     /**
      * Thread-safe insert for a list of articles
      *

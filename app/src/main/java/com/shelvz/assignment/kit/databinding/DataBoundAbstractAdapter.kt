@@ -51,6 +51,16 @@ abstract class DataBoundAbstractAdapter<T, VDB : ViewDataBinding>(context: Conte
         notifyItemRangeInserted(sizeBefore, data.size)
     }
 
+    open fun set(list: List<T>) {
+        data.clear()
+        data.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    open fun update(list: List<T>) {
+        //Implement custom list update
+    }
+
     protected abstract fun getLayoutIdForPosition(position: Int): Int
 
     protected abstract fun onViewHolderBound(item: T, position: Int, binding: VDB, holder: DataBoundBaseViewHolder<T, VDB>)
