@@ -14,7 +14,7 @@ object ArticlesManager {
     private var nextPage: Int? = 1
     private var list: MutableList<Article> = mutableListOf()
 
-    fun addArticle(article: Article, cache: Boolean = false, 
+    fun addArticle(article: Article, cache: Boolean = false,
                    subscribeOn: Scheduler = Schedulers.io(),
                    observeOn: Scheduler = AndroidSchedulers.mainThread()): Flowable<Boolean> {
         //Add to Memory
@@ -54,13 +54,18 @@ object ArticlesManager {
         return BookmarksManager.get(id = id)
     }
 
+    fun getLatestArticles(pageSize: Int = 100, dateFrom: String): Flowable<List<Article>> {
+        return getArticles(pageNumber = 1, pageSize = pageSize, dateFrom = dateFrom)
+    }
+
     fun getArticles(subscribeOn: Scheduler = Schedulers.io(),
                     observeOn: Scheduler = AndroidSchedulers.mainThread(),
-                    pageNumber: Int? = null): Flowable<List<Article>> {
+                    pageNumber: Int? = null, pageSize: Int = 10,
+                    dateFrom: String? = null): Flowable<List<Article>> {
 
         return NetworkManager.jsonClient
                 .createService(SearchServices::class.java)
-                .search(page = pageNumber ?: nextPage ?: 1)
+                .search(page = pageNumber ?: nextPage ?: 1, pageSize = pageSize, dateFrom = dateFrom)
                 .subscribeOn(subscribeOn)
                 .observeOn(observeOn)
                 .flatMap {
