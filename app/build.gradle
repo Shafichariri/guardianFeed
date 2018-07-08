@@ -23,7 +23,7 @@ android {
             buildConfigField("String", "API_BASE_URL", props["base_url"])
             buildConfigField("String", "API_KEY", props["api_key"])
             
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
