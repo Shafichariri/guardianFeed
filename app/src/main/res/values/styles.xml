@@ -30,4 +30,8 @@
         <item name="colorControlNormal">@color/control_default_color</item>
         <item name="android:textColorPrimary">@color/toolbar_text_color</item>
     </style>
+
+    <style name="FloatingButtonTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/clear_background_color</item>
+    </style>
 </resources>
