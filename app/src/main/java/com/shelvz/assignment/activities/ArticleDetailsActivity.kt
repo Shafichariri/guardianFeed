@@ -1,8 +1,11 @@
 package com.shelvz.assignment.activities
 
 import android.arch.lifecycle.Observer
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.view.MenuItem
 import android.view.View
 import com.shelvz.assignment.R
 import com.shelvz.assignment.activities.MainActivity.Companion.EXTRA_ARTICLE_ID
@@ -30,6 +33,9 @@ class ArticleDetailsActivity :
     override fun onCreated(viewDataBinding: ActivityArticleDetailsBinding, viewModel: ArticleDetailsActivityViewModel, savedInstanceState: Bundle?) {
         supportPostponeEnterTransition()
         executeTransition()
+        setSupportActionBar(viewDataBinding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        
         //Binding listener
         viewDataBinding.listener = this
 
@@ -45,16 +51,26 @@ class ArticleDetailsActivity :
         viewModel.loadArticle(articleId)
     }
 
+    //region T O O L B A R  A N D  M E N U
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+        return when (id) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+                false //We Do not consume so that it would be passed to the children fragment
+            }
+        }
+    }
+    //endregion
+    
     private fun executeTransition() {
         val extras = intent.extras
         val imageView = viewDataBinding.imageViewThumbnail
         val articleImageUrl = extras.getString(MainActivity.EXTRA_ARTICLE_IMAGE_URL)
-
-//        Note: Set the Image transition name programmatically if it is not set in the xml         
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            val transitionName = extras.getString(MainActivity.EXTRA_IMAGE_TRANSITION)
-//            imageView.transitionName = transitionName
-//        }
 
         Picasso.get()
                 .load(articleImageUrl)
@@ -79,7 +95,7 @@ class ArticleDetailsActivity :
             }
         }
     }
-    
+
     private fun updateFabButtonStatus(bookmarked: Boolean) {
         val iconRes: Int = if (bookmarked) R.drawable.v_icon_bookmark_selected else R.drawable.v_icon_bookmark_empty
         val drawable = ContextCompat.getDrawable(context, iconRes)
@@ -101,5 +117,9 @@ class ArticleDetailsActivity :
         super.onDestroy()
         //Remove from memory
         viewModel.removeArticle()
+    }
+
+    companion object {
+        fun getIntent(context: Context): Intent = Intent(context, ArticleDetailsActivity::class.java)
     }
 }
