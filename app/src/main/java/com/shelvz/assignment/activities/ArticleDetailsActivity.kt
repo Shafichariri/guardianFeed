@@ -71,7 +71,8 @@ class ArticleDetailsActivity :
         val extras = intent.extras
         val imageView = viewDataBinding.imageViewThumbnail
         val articleImageUrl = extras.getString(MainActivity.EXTRA_ARTICLE_IMAGE_URL)
-
+        if(articleImageUrl.isBlank()) return
+        
         Picasso.get()
                 .load(articleImageUrl)
                 .noFade()
