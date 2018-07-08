@@ -20,8 +20,8 @@ import com.shelvz.assignment.kit.base.BaseAdapter
 import com.shelvz.assignment.kit.databinding.DataBoundActivity
 import com.shelvz.assignment.models.Article
 import com.shelvz.assignment.utilities.LoadMoreListener
+import com.shelvz.assignment.utilities.Mode
 import com.shelvz.assignment.viewModels.MainActivityViewModel
-import com.shelvz.assignment.viewModels.Mode
 
 
 class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewModel>(), BaseAdapter.OnItemClickListener {

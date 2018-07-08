@@ -8,6 +8,8 @@ import com.shelvz.assignment.kit.databinding.BaseViewModel
 import com.shelvz.assignment.managers.ArticlesManager
 import com.shelvz.assignment.managers.BookmarksManager
 import com.shelvz.assignment.models.Article
+import com.shelvz.assignment.utilities.Action
+import com.shelvz.assignment.utilities.Mode
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -120,39 +122,3 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
     }
 }
 
-sealed class Action(id: Int) {
-    class Reload : Action(RELOAD)
-    class Add : Action(ADD)
-    class None : Action(None)
-    companion object {
-        const val RELOAD = 1
-        const val ADD = 2
-        const val None = -1
-        fun with(id: Int): Mode {
-            return when (id) {
-                RELOAD -> Mode.Local()
-                ADD -> Mode.Remote()
-                else -> Mode.None()
-            }
-        }
-    }
-}
-
-sealed class Mode(id: Int) {
-    class Local : Mode(LOCAL)
-    class Remote : Mode(REMOTE)
-    class None : Mode(None)
-
-    companion object {
-        const val LOCAL = 1
-        const val REMOTE = 2
-        const val None = -1
-        fun with(id: Int): Mode {
-            return when (id) {
-                LOCAL -> Local()
-                REMOTE -> Remote()
-                else -> None()
-            }
-        }
-    }
-}
