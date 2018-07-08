@@ -26,6 +26,8 @@ class ArticleDetailsActivity :
     override fun onCreated(viewDataBinding: ActivityArticleDetailsBinding, viewModel: ArticleDetailsActivityViewModel, savedInstanceState: Bundle?) {
         supportPostponeEnterTransition()
         executeTransition()
+        //Binding listener
+        viewDataBinding.listener = this
 
         val extras = intent.extras
         val articleId = extras.getString(EXTRA_ARTICLE_ID)
@@ -62,6 +64,11 @@ class ArticleDetailsActivity :
                     }
                 })
     }
+
+    //region D A T A B O U N D  C L I C K  L I S T E N E R S    
+    fun onBookmarkArticleClick(view: View) {
+    }
+    //endregion
 
     override fun onDestroy() {
         super.onDestroy()

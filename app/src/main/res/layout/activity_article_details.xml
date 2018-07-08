@@ -5,6 +5,10 @@
     <data>
 
         <variable
+            name="listener"
+            type="com.shelvz.assignment.activities.ArticleDetailsActivity"/>
+        
+        <variable
             name="imageUrl"
             type="String"/>
 
@@ -69,6 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:onClick="@{listener::onBookmarkArticleClick}"
             android:theme="@style/FloatingButtonTheme"
             app:layout_anchor="@+id/nested_scroll_view"
             app:layout_anchorGravity="bottom|right"
