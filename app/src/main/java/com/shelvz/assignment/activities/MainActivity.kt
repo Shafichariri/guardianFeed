@@ -54,9 +54,12 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             adapter.update(viewModel.getList())
         })
         viewModel.getIsLoadMore().observe(this, Observer { isLoadingMore ->
-            adapter.setShowLoader(isLoadingMore ?: false)
+            viewDataBinding.recyclerView.postDelayed({ adapter.setShowLoader(isLoadingMore ?: false) }, 100)
         })
         viewModel.loadArticles()
+        if (!viewModel.isCachedMode()) {
+            viewModel.startThirtySecondsPull()
+        }
 
         adapter.onItemClickListener = this
     }
