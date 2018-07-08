@@ -3,6 +3,7 @@ package com.shelvz.assignment.viewModels
 import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
 import com.shelvz.assignment.kit.databinding.BaseViewModel
 import com.shelvz.assignment.managers.ArticlesManager
 import com.shelvz.assignment.models.Article
@@ -10,7 +11,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class MainActivityViewModel(application: Application) : BaseViewModel(application) {
-
+    private val TAG = MainActivityViewModel::class.java.simpleName
+    
     var liveList: MutableLiveData<MutableList<Article>> = MutableLiveData()
     var isLoadingMore: MutableLiveData<Boolean> = MutableLiveData()
 
@@ -57,8 +59,10 @@ class MainActivityViewModel(application: Application) : BaseViewModel(applicatio
                 })
     }
 
-    fun addArticle(article: Article, cache: Boolean) {
-        ArticlesManager.addArticle(article, cache)
+    fun addArticleToMemory(article: Article) {
+        ArticlesManager.addArticle(article, cache = false)
+                .subscribe({ Log.e(TAG, "Success: $it | Removed") },
+                        { it.printStackTrace() })
     }
 
     private fun updateArticles(liveList: MutableLiveData<MutableList<Article>>,
