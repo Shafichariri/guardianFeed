@@ -12,7 +12,7 @@ interface ArticleDao : BaseDao {
     fun get(): List<Article>
 
     @Query("SELECT * FROM articles WHERE id = :id")
-    fun getArticleById(id: String): Article
+    fun getArticleById(id: String): Article?
 
     @Query("DELETE FROM articles")
     fun delete()

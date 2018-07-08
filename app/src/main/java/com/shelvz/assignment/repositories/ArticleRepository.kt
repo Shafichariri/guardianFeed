@@ -3,6 +3,7 @@ package com.shelvz.assignment.repositories
 import android.content.Context
 import com.shelvz.assignment.kit.base.BaseApplication
 import com.shelvz.assignment.models.Article
+import com.shelvz.assignment.models.Optional
 import com.shelvz.assignment.persistance.AppDatabase
 import com.shelvz.assignment.persistance.dao.ArticleDao
 import io.reactivex.Flowable
@@ -35,9 +36,9 @@ object ArticleRepository : Repository<Article> {
 
     fun get(subscribeOn: Scheduler = Schedulers.io(),
             observeOn: Scheduler = AndroidSchedulers.mainThread(),
-            articleId: String): Flowable<Article> {
+            articleId: String): Flowable<Optional<Article>> {
         return Flowable
-                .fromCallable { dao.getArticleById(articleId) }
+                .fromCallable { Optional(dao.getArticleById(articleId)) }
                 .subscribeOn(subscribeOn)
                 .observeOn(observeOn)
     }

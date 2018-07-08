@@ -1,6 +1,7 @@
 package com.shelvz.assignment.managers
 
 import com.shelvz.assignment.models.Article
+import com.shelvz.assignment.models.Optional
 import com.shelvz.assignment.models.PageInfo
 import com.shelvz.assignment.network.NetworkManager
 import com.shelvz.assignment.network.apiServices.SearchServices
@@ -14,34 +15,53 @@ object ArticlesManager {
     private var nextPage: Int? = 1
     private var list: MutableList<Article> = mutableListOf()
 
-    fun addArticle(article: Article, cache: Boolean = false) {
+    fun addArticle(article: Article, cache: Boolean = false, 
+                   subscribeOn: Scheduler = Schedulers.io(),
+                   observeOn: Scheduler = AndroidSchedulers.mainThread()): Flowable<Boolean> {
         //Add to Memory
         list.add(article)
-        
-        if (cache) {
+
+        return if (cache) {
             //Add to db
             ArticleRepository
-                    .insert(list = listOf(article))
-                    .subscribe({ _ -> }, { t: Throwable? -> t?.printStackTrace() })
+                    .insert(subscribeOn = subscribeOn, observeOn = observeOn, list = listOf(article))
+                    .map { it.isNotEmpty() }
+                    .onErrorReturn {
+                        it.printStackTrace()
+                        false
+                    }
+        } else {
+            Flowable.just(true).subscribeOn(subscribeOn).observeOn(observeOn)
         }
     }
 
-    fun removeArticle(article: Article, cache: Boolean = false) {
+    fun removeArticle(article: Article, cache: Boolean = false,
+                      subscribeOn: Scheduler = Schedulers.io(),
+                      observeOn: Scheduler = AndroidSchedulers.mainThread()): Flowable<Boolean> {
         //Remove from Memory
         list.remove(article)
 
-        if (cache) {
+        return if (cache) {
             //Remove from db
-            ArticleRepository.delete(articleId = article.id)
-                    .subscribe({ _ -> }, { t: Throwable? -> t?.printStackTrace() })
+            ArticleRepository
+                    .delete(subscribeOn = subscribeOn, observeOn = observeOn,articleId = article.id)
+                    .map { true }
+                    .onErrorReturn {
+                        it.printStackTrace()
+                        false
+                    }
+        } else {
+            Flowable.just(true).subscribeOn(subscribeOn).observeOn(observeOn)
         }
     }
 
-    fun getArticle(id: String): Flowable<Article> {
-        //From Memory
-        val article = list.find { it.id == id }
-        if (article != null) {
-            return Flowable.just(article)
+    fun getArticle(id: String, cache: Boolean = false): Flowable<Optional<Article>> {
+        if (!cache) {
+            //From Memory
+            val article = list.find { it.id == id }
+            if (article != null) {
+                return Flowable.just(Optional(article))
+            }
         }
         //From db
         return ArticleRepository.get(articleId = id)

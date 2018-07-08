@@ -58,7 +58,7 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
 
     override fun <T> onItemClick(position: Int, item: T) {
         if (item is Article) {
-            viewModel.addArticle(item, cache = false)
+            viewModel.addArticleToMemory(item)
 
             val vh = viewDataBinding.recyclerView.findViewHolderForAdapterPosition(position)
             val sharedImageView = vh.itemView.findViewById<ImageView>(R.id.imageView_thumbnail)
