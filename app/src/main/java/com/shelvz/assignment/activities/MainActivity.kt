@@ -38,6 +38,7 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
     }
 
     override fun onCreated(viewDataBinding: ActivityMainBinding, viewModel: MainActivityViewModel, savedInstanceState: Bundle?) {
+        viewDataBinding.listener = this
         setupRecyclerView()
 
         val extras: Bundle? = intent.extras
@@ -71,6 +72,13 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             viewModel.reloadCachedArticles()
         }
     }
+
+    //region D A T A B O U N D  C L I C K  L I S T E N E R S    
+    fun onPullUpButtonClick(view: View) {
+        viewDataBinding.pullUpButtonVisibility = false
+        viewDataBinding.recyclerView.smoothScrollToPosition(0)
+    }
+    //endregion
 
     //region T O O L B A R  A N D  M E N U
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
