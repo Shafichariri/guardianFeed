@@ -5,15 +5,16 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.shelvz.assignment.kit.base.BaseAdapter
+import com.shelvz.assignment.kit.base.BaseAdapterWithLoader
+import com.shelvz.assignment.kit.base.BaseModel
 
 
 /**
  * Created by shafic on 8/19/17.
  */
 
-abstract class DataBoundAbstractAdapter<T, VDB : ViewDataBinding>(context: Context, data: MutableList<T>) :
-        BaseAdapter<T, DataBoundBaseViewHolder<T, VDB>>(context, data) {
+abstract class DataBoundAbstractAdapter<T: BaseModel, VDB : ViewDataBinding>(context: Context, data: MutableList<T>) :
+        BaseAdapterWithLoader<T, DataBoundBaseViewHolder<T, VDB>>(context, data) {
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): DataBoundBaseViewHolder<T, VDB> {
@@ -38,27 +39,6 @@ abstract class DataBoundAbstractAdapter<T, VDB : ViewDataBinding>(context: Conte
         } else {
             getLayoutIdForPosition(position)
         }
-    }
-
-    open fun prepend(list: List<T>) {
-        data.addAll(0, list)
-        notifyItemRangeInserted(0, list.size)
-    }
-
-    open fun append(list: List<T>) {
-        val sizeBefore = data.size
-        data.addAll(sizeBefore, list)
-        notifyItemRangeInserted(sizeBefore, data.size)
-    }
-
-    open fun set(list: List<T>) {
-        data.clear()
-        data.addAll(list)
-        notifyDataSetChanged()
-    }
-
-    open fun update(list: List<T>) {
-        //Implement custom list update
     }
 
     protected abstract fun getLayoutIdForPosition(position: Int): Int
