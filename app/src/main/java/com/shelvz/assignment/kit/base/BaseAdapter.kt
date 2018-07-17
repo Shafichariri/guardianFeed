@@ -69,6 +69,14 @@ abstract class BaseAdapter<T: BaseModel, VH : RecyclerView.ViewHolder>(val conte
         return returnPositionValue
     }
 
+    open fun update(newItems: List<T>) {
+        val diffResult = DiffUtil.calculateDiff(DefaultDiffUtilsCallback(data, newItems))
+        diffResult.dispatchUpdatesTo(this)
+
+        data.clear()
+        data.addAll(newItems)
+    }
+    
     interface OnItemClickListener {
         fun <T> onItemClick(position: Int, item: T)
     }

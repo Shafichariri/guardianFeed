@@ -1,9 +1,7 @@
 package com.shelvz.assignment.adapters
 
 import android.content.Context
-import android.support.v7.util.DiffUtil
 import com.shelvz.assignment.R
-import com.shelvz.assignment.adapters.DiffUtils.DiffUtilsCallback
 import com.shelvz.assignment.databinding.ItemArticleBinding
 import com.shelvz.assignment.kit.databinding.DataBoundAbstractAdapter
 import com.shelvz.assignment.kit.databinding.DataBoundBaseViewHolder
@@ -25,13 +23,5 @@ class ArticlesAdapter(context: Context, items: MutableList<Article>) :
 
     override fun getLoaderLayoutId(): Int {
         return R.layout.item_load_more
-    }
-
-    override fun update(newItems: List<Article>) {
-        val diffResult = DiffUtil.calculateDiff(DiffUtilsCallback(data, newItems))
-        diffResult.dispatchUpdatesTo(this)
-
-        data.clear()
-        data.addAll(newItems)
     }
 }
