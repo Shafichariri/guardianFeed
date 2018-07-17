@@ -5,15 +5,16 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.shelvz.assignment.kit.base.BaseAdapter
+import com.shelvz.assignment.kit.base.BaseAdapterWithLoader
+import com.shelvz.assignment.kit.base.BaseModel
 
 
 /**
  * Created by shafic on 8/19/17.
  */
 
-abstract class DataBoundAbstractAdapter<T, VDB : ViewDataBinding>(context: Context, data: MutableList<T>) :
-        BaseAdapter<T, DataBoundBaseViewHolder<T, VDB>>(context, data) {
+abstract class DataBoundAbstractAdapter<T: BaseModel, VDB : ViewDataBinding>(context: Context, data: MutableList<T>) :
+        BaseAdapterWithLoader<T, DataBoundBaseViewHolder<T, VDB>>(context, data) {
 
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): DataBoundBaseViewHolder<T, VDB> {
