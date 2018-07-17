@@ -1,6 +1,6 @@
 package com.shelvz.assignment.models.response
 
-import com.shelvz.assignment.models.BaseModel
+import com.shelvz.assignment.kit.base.BaseModel
 import com.shelvz.assignment.models.PageInfo
 
 data class APIResponseBody<T : BaseModel>(

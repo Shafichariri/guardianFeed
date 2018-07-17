@@ -5,6 +5,7 @@ import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.shelvz.assignment.kit.base.BaseModel
 
 @Entity(tableName = "articles")
 data class Article(
