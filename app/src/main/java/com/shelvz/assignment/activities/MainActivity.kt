@@ -59,11 +59,7 @@ class MainActivity : DataBoundActivity<ActivityMainBinding, MainActivityViewMode
             }
         })
         viewModel.getIsLoadMore().observe(this, Observer { isLoadingMore ->
-            if (viewDataBinding.recyclerView.layoutManager == null) {
-                viewDataBinding.recyclerView.postDelayed({ adapter.setShowLoader(isLoadingMore ?: false) }, 100)
-            } else {
-                adapter.setShowLoader(isLoadingMore ?: false)
-            }
+            viewDataBinding.recyclerView.post { adapter.setShowLoader(isLoadingMore ?: false) }
         })
         viewModel.loadArticles()
 
